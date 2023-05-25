@@ -19,10 +19,11 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private static final String X_SHARER_USER_ID = "X-Sharer-User-Id";
 
     @PostMapping
     public ItemDto createItem(@RequestBody @Validated ItemRequestDto itemRequestDto,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @RequestHeader(X_SHARER_USER_ID) Long userId) {
         log.info("Запрос на добавление вещи пользователем с id = {}", userId);
         return itemService.addItem(itemRequestDto, userId);
     }
@@ -30,27 +31,27 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@PathVariable Long itemId,
                               @RequestBody ItemRequestDto itemRequestDto,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @RequestHeader(X_SHARER_USER_ID) Long userId) {
         log.info("Запрос на изменение вещи с id = {}", itemId);
         return itemService.updateItem(itemId, itemRequestDto, userId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto findItemById(@PathVariable Long itemId,
-                                @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                @RequestHeader(X_SHARER_USER_ID) Long userId) {
         log.info("Запрос на получение вещи с id = {}", itemId);
         return itemService.findItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> findUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> findUserItems(@RequestHeader(X_SHARER_USER_ID) Long userId) {
         log.info("Запрос на получение вещей пользователя с id = {}", userId);
         return itemService.findUserItems(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItemsByText(@RequestParam String text,
-                                           @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                           @RequestHeader(X_SHARER_USER_ID) Long userId) {
         log.info("Запрос на поиск вещей по запросу '{}'", text);
         return itemService.searchItemsByText(text, userId);
     }

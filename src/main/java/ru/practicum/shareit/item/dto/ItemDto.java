@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-controllers.
