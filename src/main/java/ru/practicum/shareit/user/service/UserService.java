@@ -17,6 +17,4 @@ public interface UserService {
     void deleteUserById(Long userId);
 
     List<UserDto> findAllUsers();
-
-    Map<Long, User> getUserMap();
 }
