@@ -17,13 +17,4 @@ public interface BookingService {
 
     Iterable<BookingResponseDto> findBookingsByOwnerId(Long userId, String state);
 
-    enum State {
-        ALL,
-        CURRENT,
-        PAST,
-        FUTURE,
-        WAITING,
-        REJECTED
-    }
-
 }

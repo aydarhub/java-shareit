@@ -3,15 +3,18 @@ package ru.practicum.shareit.item.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingJpaRepository;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.repository.CommentJpaRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsResponseDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.CommentJpaRepository;
 import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
@@ -125,19 +128,6 @@ public class ItemServiceImpl implements ItemService {
                 true);
         log.debug("Найдены все предметы по запросу '{}'", text);
         return ItemMapper.toItemDtoList(items);
-    }
-
-    @Override
-    public CommentResponseDto postComment(Long userId, Long itemId, CommentRequestDto commentRequestDto) {
-        checkItemExistsById(itemId);
-        checkUserExistsById(userId);
-        LocalDateTime time = LocalDateTime.now();
-        checkBookingExists(userId, itemId, time);
-        Comment comment = ItemMapper.toComment(commentRequestDto,
-                userJpaRepository.getReferenceById(userId),
-                itemJpaRepository.getReferenceById(itemId),
-                time);
-        return ItemMapper.toCommentResponseDto(commentJpaRepository.save(comment));
     }
 
     private void checkUserExistsById(Long userId) {

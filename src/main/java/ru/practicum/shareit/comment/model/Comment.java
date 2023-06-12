@@ -1,7 +1,8 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.comment.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;

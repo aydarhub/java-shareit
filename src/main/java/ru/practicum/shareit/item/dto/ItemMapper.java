@@ -2,18 +2,19 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.comment.dto.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
+
     public static ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
@@ -45,41 +46,20 @@ public class ItemMapper {
         ItemWithBookingsResponseDto itemWithBookingsResponseDto = new ItemWithBookingsResponseDto();
 
         if (lastBooking != null) {
-            itemWithBookingsResponseDto.setLastBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(lastBooking));
+            itemWithBookingsResponseDto.setLastBooking(BookingMapper.toBookingDto(lastBooking));
         }
         if (nextBooking != null) {
-            itemWithBookingsResponseDto.setNextBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking));
+            itemWithBookingsResponseDto.setNextBooking(BookingMapper.toBookingDto(nextBooking));
         }
 
         itemWithBookingsResponseDto.setId(item.getId());
         itemWithBookingsResponseDto.setName(item.getName());
         itemWithBookingsResponseDto.setDescription(item.getDescription());
         itemWithBookingsResponseDto.setAvailable(item.isAvailable());
-        itemWithBookingsResponseDto.setComments(ItemWithBookingsResponseDto.CommentDto.toListCommentDto(comments));
+        itemWithBookingsResponseDto.setComments(CommentMapper.toCommentResponseDtoList(comments));
 
         return itemWithBookingsResponseDto;
     }
 
-    public static Comment toComment(CommentRequestDto commentRequestDto,
-                                    User user,
-                                    Item item,
-                                    LocalDateTime createdTime) {
-        Comment comment = new Comment();
-        comment.setText(commentRequestDto.getText());
-        comment.setAuthor(user);
-        comment.setItem(item);
-        comment.setCreatedTime(createdTime);
 
-        return comment;
-    }
-
-    public static CommentResponseDto toCommentResponseDto(Comment comment) {
-        CommentResponseDto commentResponseDto = new CommentResponseDto();
-        commentResponseDto.setText(comment.getText());
-        commentResponseDto.setAuthorName(comment.getAuthor().getName());
-        commentResponseDto.setCreatedTime(comment.getCreatedTime());
-        commentResponseDto.setId(comment.getId());
-
-        return commentResponseDto;
-    }
 }
