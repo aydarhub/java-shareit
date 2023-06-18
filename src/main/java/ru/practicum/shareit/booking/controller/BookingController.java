@@ -1,16 +1,20 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 /**
  * TODO Sprint add-bookings.
  */
+@Validated
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
@@ -41,17 +45,21 @@ public class BookingController {
     @GetMapping
     public Iterable<BookingResponseDto> findBookingsByUserId(
             @RequestHeader(X_SHARER_USER_ID) Long userId,
-            @RequestParam(required = false, defaultValue = "ALL") String state
+            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+            @Positive @RequestParam(defaultValue = "10") Integer size
     ) {
-        return bookingService.findBookingsByUserId(userId, state);
+        return bookingService.findBookingsByUserId(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public Iterable<BookingResponseDto> findBookingsByOwnerId(
             @RequestHeader(X_SHARER_USER_ID) Long ownerId,
-            @RequestParam(required = false, defaultValue = "ALL") String state
+            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+            @Positive @RequestParam(defaultValue = "10") Integer size
     ) {
-        return bookingService.findBookingsByOwnerId(ownerId, state);
+        return bookingService.findBookingsByOwnerId(ownerId, state, from, size);
     }
 
 }

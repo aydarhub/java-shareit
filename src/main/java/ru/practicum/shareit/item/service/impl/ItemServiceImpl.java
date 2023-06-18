@@ -17,6 +17,7 @@ import ru.practicum.shareit.item.dto.ItemWithBookingsResponseDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.repository.ItemRequestJpaRepository;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
 
 import java.time.LocalDateTime;
@@ -33,10 +34,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemJpaRepository itemJpaRepository;
     private final BookingJpaRepository bookingJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
+    private final ItemRequestJpaRepository itemRequestJpaRepository;
 
     @Override
     public ItemDto addItem(ItemRequestDto itemRequestDto, Long userId) {
         Item item = ItemMapper.fromItemRequestDto(itemRequestDto);
+        if (itemRequestDto.getRequestId() != null) {
+            item.setRequest(itemRequestJpaRepository.getReferenceById(itemRequestDto.getRequestId()));
+        }
         checkUserExistsById(userId);
         item.setOwner(userJpaRepository.getReferenceById(userId));
         log.debug("Добавлена новая вещь пользователем с id = {}", userId);

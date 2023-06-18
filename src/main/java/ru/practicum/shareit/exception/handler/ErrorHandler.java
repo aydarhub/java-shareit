@@ -37,6 +37,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({
+            MethodArgumentNotValidException.class,
             BadRequestException.class,
             MethodArgumentNotValidException.class
     })
@@ -47,7 +48,7 @@ public class ErrorHandler {
 
     @Getter
     @Setter
-    private static class ErrorResponse {
+    public static class ErrorResponse {
         private String error;
 
         private static ErrorResponse fromMessage(String str) {

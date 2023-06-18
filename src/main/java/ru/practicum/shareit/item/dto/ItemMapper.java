@@ -20,7 +20,8 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.isAvailable()
+                item.getAvailable(),
+                item.getRequest() != null ? item.getRequest().getId() : null
         );
     }
 
@@ -55,7 +56,7 @@ public class ItemMapper {
         itemWithBookingsResponseDto.setId(item.getId());
         itemWithBookingsResponseDto.setName(item.getName());
         itemWithBookingsResponseDto.setDescription(item.getDescription());
-        itemWithBookingsResponseDto.setAvailable(item.isAvailable());
+        itemWithBookingsResponseDto.setAvailable(item.getAvailable());
         itemWithBookingsResponseDto.setComments(CommentMapper.toCommentResponseDtoList(comments));
 
         return itemWithBookingsResponseDto;

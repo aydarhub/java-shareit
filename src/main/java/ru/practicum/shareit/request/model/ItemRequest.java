@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,10 +24,11 @@ public class ItemRequest {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "requestor_id")
-    private User requestor;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "requester_id")
+    private User requester;
 
-    private LocalDateTime created;
+    @Column(name = "created", nullable = false)
+    private LocalDateTime created = LocalDateTime.now();
 
 }
