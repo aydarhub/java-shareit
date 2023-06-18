@@ -765,8 +765,8 @@ class ItemServiceImplTest {
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item);
-        when(itemJpaRepository.
-                findAllByNameOrDescriptionContainingIgnoreCaseAndAvailable("Text", "Text", true))
+        when(itemJpaRepository
+                .findAllByNameOrDescriptionContainingIgnoreCaseAndAvailable("Text", "Text", true))
                 .thenReturn(itemList);
         List<ItemDto> itemDtoList = itemServiceImpl.searchItemsByText("Text", 1L);
         assertEquals(1, itemDtoList.size());
@@ -796,8 +796,8 @@ class ItemServiceImplTest {
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item1);
         itemList.add(item);
-        when(itemJpaRepository.
-                findAllByNameOrDescriptionContainingIgnoreCaseAndAvailable("Text", "Text", true))
+        when(itemJpaRepository
+                .findAllByNameOrDescriptionContainingIgnoreCaseAndAvailable("Text", "Text", true))
                 .thenReturn(itemList);
         List<ItemDto> itemDtoList = itemServiceImpl.searchItemsByText("Text", 1L);
         assertEquals(2, itemDtoList.size());
