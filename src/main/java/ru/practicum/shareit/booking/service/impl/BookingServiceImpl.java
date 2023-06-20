@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,9 +86,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> findBookingsByUserId(Long userId, String stateStr) {
+    public List<BookingResponseDto> findBookingsByUserId(Long userId, String stateStr, Integer from, Integer size) {
         checkUserExistsById(userId);
 
+        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable pageableSorted = PageRequest.of(from / size, size, Sort.by("start").descending());
         List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
         State state;
@@ -98,27 +102,32 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case ALL:
                 bookings = bookingJpaRepository
-                        .findBookingByBookerId(userId, Sort.by("start").descending());
+                        .findBookingByBookerId(
+                                userId,
+                                pageableSorted);
                 break;
             case CURRENT:
                 bookings = bookingJpaRepository
-                        .findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(userId, now, now);
+                        .findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(userId, now, now, pageable);
                 break;
             case PAST:
                 bookings = bookingJpaRepository
-                        .findBookingByBookerIdAndStartIsBeforeAndEndIsBefore(userId, now, now,Sort.by("start").descending());
+                        .findBookingByBookerIdAndStartIsBeforeAndEndIsBefore(userId, now, now, pageableSorted);
                 break;
             case FUTURE:
                 bookings = bookingJpaRepository
-                        .findBookingByBookerIdAndStartIsAfter(userId, now, Sort.by("start").descending());
+                        .findBookingByBookerIdAndStartIsAfter(
+                                userId,
+                                now,
+                                pageableSorted);
                 break;
             case WAITING:
                 bookings = bookingJpaRepository
-                        .findBookingByBookerIdAndStatusEquals(userId, Status.WAITING);
+                        .findBookingByBookerIdAndStatusEquals(userId, Status.WAITING, pageable);
                 break;
             case REJECTED:
                 bookings = bookingJpaRepository
-                        .findBookingByBookerIdAndStatusEquals(userId, Status.REJECTED);
+                        .findBookingByBookerIdAndStatusEquals(userId, Status.REJECTED, pageable);
                 break;
             default:
                 throw new BadRequestException(String.format("Unknown state: %s", state));
@@ -128,9 +137,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Iterable<BookingResponseDto> findBookingsByOwnerId(Long ownerId, String stateStr) {
+    public Iterable<BookingResponseDto> findBookingsByOwnerId(Long ownerId, String stateStr, Integer from, Integer size) {
         checkUserExistsById(ownerId);
 
+        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable pageableSorted = PageRequest.of(from / size, size, Sort.by("start").descending());
         Iterable<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
 
@@ -144,27 +155,33 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case ALL:
                 bookings = bookingJpaRepository
-                        .findAllByItemOwnerId(ownerId, Sort.by("start").descending());
+                        .findAllByItemOwnerId(ownerId, pageableSorted);
                 break;
             case CURRENT:
                 bookings = bookingJpaRepository
-                        .findBookingByItemOwnerIdAndStartIsBeforeAndEndIsAfter(ownerId, now, now);
+                        .findBookingByItemOwnerIdAndStartIsBeforeAndEndIsAfter(ownerId, now, now, pageable);
                 break;
             case PAST:
                 bookings = bookingJpaRepository
-                        .findBookingByItemOwnerIdAndEndIsBefore(ownerId, now, Sort.by("start").descending());
+                        .findBookingByItemOwnerIdAndEndIsBefore(
+                                ownerId,
+                                now,
+                                pageableSorted);
                 break;
             case FUTURE:
                 bookings = bookingJpaRepository
-                        .findBookingByItemOwnerIdAndStartIsAfter(ownerId, now, Sort.by("start").descending());
+                        .findBookingByItemOwnerIdAndStartIsAfter(
+                                ownerId,
+                                now,
+                                pageableSorted);
                 break;
             case WAITING:
                 bookings = bookingJpaRepository
-                        .findBookingByItemOwnerIdAndStatusEquals(ownerId, Status.WAITING);
+                        .findBookingByItemOwnerIdAndStatusEquals(ownerId, Status.WAITING, pageable);
                 break;
             case REJECTED:
                 bookings = bookingJpaRepository
-                        .findBookingByItemOwnerIdAndStatusEquals(ownerId, Status.REJECTED);
+                        .findBookingByItemOwnerIdAndStatusEquals(ownerId, Status.REJECTED, pageable);
                 break;
             default:
                 throw new BadRequestException(String.format("Unknown state: %s", stateStr));
@@ -205,7 +222,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void checkIsItemAvailable(Item item) {
-        if (!item.isAvailable()) {
+        if (!item.getAvailable()) {
             throw new BadRequestException("Вещь недоступна для бронирования");
         }
     }
